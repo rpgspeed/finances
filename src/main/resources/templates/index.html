@@ -4,9 +4,6 @@
     <title>Finances</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"/>-->
-    <!--<script src="https://code.jquery.com/jquery-1.12.4.js"/>-->
-    <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>-->
 
     <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-1.12.4.js"/>
     <script type="text/javascript" charset="utf8" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
@@ -14,89 +11,53 @@
 
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" media="screen" />
     <link href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" rel="stylesheet"  media="screen" />
-    <!--<link rel="stylesheet" type="text/css" th:href="@{/css/site.css}" />-->
-
-    <!--<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css"/>-->
-    <!--<link rel="stylesheet" type="text/css" href="css/table.css"/>-->
-    <!--<script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.2.min.js"></script>-->
 
     <script src="/js/datatable.js"></script>
-    <script type="text/javascript">
-        $('#confirmDelete').on('show.bs.modal', function (e) {
-        $message = $(e.relatedTarget).attr('data-message');
-        $(this).find('.modal-body p').text($message);
-        $title = $(e.relatedTarget).attr('data-title');
-        $(this).find('.modal-title').text($title);
-
-        // Pass form reference to modal for submission on yes/ok
-        var form = $(e.relatedTarget).closest('form');
-        $(this).find('.modal-footer #confirm').data('form', form);
-        });
-
-        <!-- Form confirm (yes/ok) handler, submits form -->
-        $('#confirmDelete').find('.modal-footer #confirm').on('click', function(){
-        $(this).data('form').submit();
-        });
-    </script>
-
 
     </head>
     <body>
         <div class="col-md-1"/>
         <div class="col-md-10">
-            <form class="form-horizontal" th:action="@{/stock}" method="post">
-                <h1>Stock data information</h1>
-                <label>Enter symbol to download information:</label>
-                <input name="symbol" type="text" />
-                <input type="submit" th:value="Download" />
+            <form name="form" class="form-horizontal" th:action="@{/stock}" method="post">
+                    <h1>Stock data information</h1>
+                    <label>Enter symbol to download information:</label>
+                    <input name="symbol" type="text" />
+                    <input type="submit" th:value="Download" />
+
+
+                <div class="form-horizontal" th:if="${not #lists.isEmpty(stocks)}">
+                    <h2>Stock List</h2>
+
+                    <table id="stockTable" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%"><!--<table id="stockTable" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%" role="grid" aria-describedby="example_info" style="width: 100%;">-->
+                        <thead align="left">
+                            <tr>
+                                <th>Id</th>
+                                <th>Symbol</th>
+                                <th>Company name</th>
+                                <th>Previous close</th>
+                                <th>Price</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="stock : ${stocks}" role="row"  class="odd">
+                                <td th:text="${stock.getId()}"></td>
+                                <td th:text="${stock.getSymbol()}"></td>
+                                <td th:text="${stock.getName()}"></td>
+                                <td th:text="${stock.getStockQuoteEntity().getPreviousClose()}"></td>
+                                <td th:text="${stock.getStockQuoteEntity().getPrice()}"></td>
+                                <td>
+                                    <form method="POST" th:action="${'/stock/delete/' + stock.getId()}"  accept-charset="UTF-8" style="display:inline">
+                                        <button class="btn btn-xs btn-danger" type="button" data-toggle="modal" data-target="#confirmDelete">
+                                            <i class="glyphicon glyphicon-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </form>
-
-            <div class="form-horizontal" th:if="${not #lists.isEmpty(stocks)}">
-                <h2>Stock List</h2>
-
-                <table id="stockTable" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%"><!--<table id="stockTable" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%" role="grid" aria-describedby="example_info" style="width: 100%;">-->
-                    <thead align="left">
-                        <tr>
-                            <th>Id</th>
-                            <th>Symbol</th>
-                            <th>Company name</th>
-                            <th>Previous close</th>
-                            <th>Price</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="stock : ${stocks}" role="row"  class="odd">
-                            <td th:text="${stock.getId()}"></td>
-                            <td th:text="${stock.getSymbol()}"></td>
-                            <td th:text="${stock.getName()}"></td>
-                            <td th:text="${stock.getStockQuoteEntity().getPreviousClose()}"></td>
-                            <td th:text="${stock.getStockQuoteEntity().getPrice()}"></td>
-                            <!--<td><a th:href="${'/stock/delete/' + stock.getId()}">Delete</a></td>-->
-
-                            <!--<td>-->
-                                <!--<form action="#" th:action="${'/stock/delete/' + stock.getId()}" th:method="delete" >-->
-                                    <!--<input type="hidden" name="_method" value="delete" />-->
-                                    <!--<button type="submit" id="submitButton"> </button>-->
-                                <!--</form>-->
-                            <!--</td>-->
-
-                            <td>
-                                <form th:name="${'form'+stock.getId()}" action="#" th:action="${'/stock/delete/' + stock.getId()}" th:method="post" >
-                                <!--<input type="hidden" name="_method" value="delete" />-->
-                                    <button class="btn btn-xs btn-danger" type="button" data-toggle="modal" data-target="#confirmDelete">
-                                        <i class="glyphicon glyphicon-trash"></i> Delete
-                                    </button>
-
-                                </form>
-                            </td>
-                            <!--<td>-->
-                            <!--<a href="#" class="confirm-delete" data-id="4">Delete</a>-->
-                            <!--</td>-->
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
         </div>
         <div class="col-md-1"/>
     </body>
@@ -119,4 +80,22 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    $('#confirmDelete').on('show.bs.modal', function (e) {
+        $message = $(e.relatedTarget).attr('data-message');
+        $(this).find('.modal-body p').text($message);
+        $title = $(e.relatedTarget).attr('data-title');
+        $(this).find('.modal-title').text($title);
+
+        // Pass form reference to modal for submission on yes/ok
+        var form = $(e.relatedTarget).closest('form');
+        $(this).find('.modal-footer #confirm').data('form', form);
+    });
+
+    <!-- Form confirm (yes/ok) handler, submits form -->
+    $('#confirmDelete').find('.modal-footer #confirm').on('click', function(){
+        $(this).data('form').submit();
+    });
+</script>
 </html>

@@ -30,7 +30,7 @@ public class StockController {
         }
     }
 
-    @RequestMapping(value = "stock/delete/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "stock/delete/{id}", method = RequestMethod.POST)
     String deleteStock(@PathVariable Integer id, Model model){
         stockService.deleteStock(id);
         return "redirect:/";
