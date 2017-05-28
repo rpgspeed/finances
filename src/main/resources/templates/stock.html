@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <title>Sage Invoices</title>
+</head>
+<body>
+        <td th:text="${stock.getName()}"></td>
+        <form th:action="@{/}" method="post">
+            <button type="submit" name="index">Back</button>
+        </form>
+</body>
+</html>

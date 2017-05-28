@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Title</title>
+</head>
+<body>
+    <div th:if="${not #lists.isEmpty(stocks)}">
+        <h2>Stock List</h2>
+        <table class="table table-striped">
+            <tr>
+                <th>Symbol</th>
+            </tr>
+            <tr th:each="stock : ${stocks}">
+                <td th:text="${stock.getSymbol()}"></td>
+                <td th:text="${stock.getName()}"></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
