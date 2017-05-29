@@ -20,4 +20,6 @@ public interface StockService {
     Iterable<StockEntity> getAllStocks();
 
     void deleteStock(Integer id);
+
+    void updateLastOldStocks() throws IOException;
 }

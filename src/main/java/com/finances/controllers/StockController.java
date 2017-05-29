@@ -30,6 +30,17 @@ public class StockController {
         }
     }
 
+    @RequestMapping(value = "stock/update/{symbol}", method = RequestMethod.POST)
+    String getStockUpdate(@PathVariable String symbol, Model model){
+        try {
+            stockService.getStock(symbol);
+            return "redirect:/";
+
+        } catch (IOException e) {
+            return "error";
+        }
+    }
+
     @RequestMapping(value = "stock/delete/{id}", method = RequestMethod.POST)
     String deleteStock(@PathVariable Integer id, Model model){
         stockService.deleteStock(id);
@@ -41,5 +52,4 @@ public class StockController {
         model.addAttribute("stocks", stockService.getAllStocksFromAPI());
         return "stocks";
     }
-
 }

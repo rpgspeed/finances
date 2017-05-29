@@ -5,6 +5,7 @@ import com.finances.domain.StockEntity;
 import com.finances.repositories.StockRepository;
 import com.finances.services.StockService;
 import com.finances.utils.UtilsCSV;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
@@ -36,7 +37,7 @@ public class StockServiceImpl implements StockService{
     public Stock getStock(final String symbol) throws IOException {
         Stock stock = YahooFinance.get(symbol);
         StockEntity stockEntity = new StockEntity(stock);
-        save(stockEntity);
+        saveOrUpdate(stockEntity);
         return stock;
     }
 
@@ -52,7 +53,7 @@ public class StockServiceImpl implements StockService{
 
             for (Stock stock : stockList) {
                 StockEntity stockEntity = new StockEntity(stock);
-                save(stockEntity);
+                saveOrUpdate(stockEntity);
             }
         } catch (FileNotFoundException e) {
 
@@ -62,7 +63,13 @@ public class StockServiceImpl implements StockService{
         return stockList;
     }
 
-    public StockEntity save(final StockEntity stockEntity) {
+    public StockEntity saveOrUpdate(final StockEntity stockEntity) {
+        StockEntity stockEntityToUpdate = stockRepository.findBySymbol(stockEntity.getSymbol());
+
+        if (stockEntityToUpdate != null) {
+            stockEntity.setId(stockEntityToUpdate.getId());
+            stockEntity.setUpdateAudit();
+        }
         return stockRepository.save(stockEntity);
     }
 
@@ -75,4 +82,19 @@ public class StockServiceImpl implements StockService{
     public void deleteStock(final Integer id){
         stockRepository.delete(id);
             }
+
+    @Override
+    public void updateLastOldStocks() throws IOException {
+        List<StockEntity> lastOldStocks = stockRepository.getLastOldStocks();
+        List<StockEntity> stockEntities = lastOldStocks;
+        if (lastOldStocks.size() > 10) {
+            stockEntities = lastOldStocks.subList(0, 10);
+        }
+
+        for (StockEntity lastOldStock : stockEntities) {
+            Stock stock = YahooFinance.get(lastOldStock.getSymbol());
+            saveOrUpdate(new StockEntity(stock));
+            System.out.println("TRIGGER: "+lastOldStock.getSymbol());
+        }
+    }
 }
