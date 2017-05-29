@@ -37,6 +37,7 @@
                             <th>Company name</th>
                             <th>Previous close</th>
                             <th>Price</th>
+                            <th>Last trade time</th>
                             <th>Last updated</th>
                             <th></th>
                         </tr>
@@ -48,6 +49,7 @@
                             <td th:text="${stock.getName()}"></td>
                             <td th:text="${stock.getStockQuoteEntity().getPreviousClose()}"></td>
                             <td th:text="${stock.getStockQuoteEntity().getPrice()}"></td>
+                            <td th:text="${stock.getStockQuoteEntity().getFormatedDateTime()}"></td>
                             <td th:text="${(stock.getUpdatedAt()!=null) ? stock.getUpdatedAt() : stock.getCreatedAt()}"></td>
                             <td>
                                 <form method="POST" th:action="${'/stock/update/'+ stock.getSymbol()}"  accept-charset="UTF-8" style="display:inline">

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class IndexController implements ErrorController {
     public static final String ERROR_PATH = "/error";
+    public static final String ERROR_MESSAGE_DOWNLOAD = "The stock does not exists, failed to download it";
     private final StockService stockService;
 
     public IndexController(StockService stockService) {
@@ -24,7 +25,7 @@ public class IndexController implements ErrorController {
 
     @RequestMapping(ERROR_PATH)
     String error(Model model) {
-        model.addAttribute("errorMessage", "HA FALLADO");
+        model.addAttribute("errorMessage", ERROR_MESSAGE_DOWNLOAD);
         return "error";
     }
 
