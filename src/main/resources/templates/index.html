@@ -15,57 +15,76 @@
     <script src="/js/datatable.js"></script>
     <script src="/js/refresh.js"></script>
 
+    <script>
+        function refresh() {
+            var checkedValue = document.getElementById("autoRefreshCheckbox").checked;
+            document.getElementById("autoRefresh").value = checkedValue;
+            document.refreshForm.submit();
+        }
+    </script>
+
     </head>
     <body>
         <div class="col-md-1"/>
         <div class="col-md-10">
-            <form name="form" class="form-horizontal" th:action="@{/stock}" method="post">
-                    <h1>Stock data information</h1>
-                    <label>Enter symbol to download information:</label>
-                    <input name="symbol" type="text" />
-                    <input type="submit" th:value="Download" />
-            </form>
 
-            <div class="form-horizontal" th:if="${not #lists.isEmpty(stocks)}">
-                <h2>Stock List</h2>
+                <div class="col-md-6">
+                    <form name="form" class="form-horizontal" th:action="@{/stock}" method="post">
+                            <h1>Stock data information</h1>
+                            <label>Enter symbol to download information:</label>
+                            <input name="symbol" type="text" />
+                            <input type="submit" th:value="Download" />
+                    </form>
+                </div>
+                <div class="col-md-6" align="right">
+                    <form name="refreshForm" class="form-horizontal" th:action="@{/autoRefresh}" method="post">
+                        <label>Auto refresh</label><input type="checkbox" id="autoRefreshCheckbox" th:checked="${isTriggerEnabled}" onclick="refresh()"/>
+                        <input type="hidden" id="autoRefresh" name="autoRefresh"/>
+                    </form>
+                </div>
 
-                <table id="stockTable" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%"><!--<table id="stockTable" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%" role="grid" aria-describedby="example_info" style="width: 100%;">-->
-                    <thead align="left">
-                        <tr>
-                            <th>Id</th>
-                            <th>Symbol</th>
-                            <th>Company name</th>
-                            <th>Previous close</th>
-                            <th>Price</th>
-                            <th>Last trade time</th>
-                            <th>Last updated</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="stock : ${stocks}" role="row"  class="odd">
-                            <td th:text="${stock.getId()}"></td>
-                            <td th:text="${stock.getSymbol()}"></td>
-                            <td th:text="${stock.getName()}"></td>
-                            <td th:text="${stock.getStockQuoteEntity().getPreviousClose()}"></td>
-                            <td th:text="${stock.getStockQuoteEntity().getPrice()}"></td>
-                            <td th:text="${stock.getStockQuoteEntity().getFormatedDateTime()}"></td>
-                            <td th:text="${(stock.getUpdatedAt()!=null) ? stock.getUpdatedAt() : stock.getCreatedAt()}"></td>
-                            <td>
-                                <form method="POST" th:action="${'/stock/update/'+ stock.getSymbol()}"  accept-charset="UTF-8" style="display:inline">
-                                    <button class="btn btn-xs btn-info" type="submit" data-toggle="modal">
-                                        <i class="glyphicon glyphicon-refresh"></i> Refresh
-                                    </button>
-                                </form>
-                                <form method="POST" th:action="${'/stock/delete/' + stock.getId()}"  accept-charset="UTF-8" style="display:inline">
-                                    <button class="btn btn-xs btn-danger" type="button" data-toggle="modal" data-target="#confirmDelete">
-                                        <i class="glyphicon glyphicon-trash"></i> Delete
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="col-md-12">
+                <div class="form-horizontal" th:if="${not #lists.isEmpty(stocks)}">
+                    <h2>Stock List</h2>
+
+                    <table id="stockTable" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%"><!--<table id="stockTable" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%" role="grid" aria-describedby="example_info" style="width: 100%;">-->
+                        <thead align="left">
+                            <tr>
+                                <th>Id</th>
+                                <th>Symbol</th>
+                                <th>Company name</th>
+                                <th>Previous close</th>
+                                <th>Price</th>
+                                <th>Last trade time</th>
+                                <th>Last updated</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="stock : ${stocks}" role="row"  class="odd">
+                                <td th:text="${stock.getId()}"></td>
+                                <td th:text="${stock.getSymbol()}"></td>
+                                <td th:text="${stock.getName()}"></td>
+                                <td th:text="${stock.getStockQuoteEntity().getPreviousClose()}"></td>
+                                <td th:text="${stock.getStockQuoteEntity().getPrice()}"></td>
+                                <td th:text="${stock.getStockQuoteEntity().getFormatedDateTime()}"></td>
+                                <td th:text="${(stock.getUpdatedAt()!=null) ? stock.getUpdatedAt() : stock.getCreatedAt()}"></td>
+                                <td>
+                                    <form method="POST" th:action="${'/stock/update/'+ stock.getSymbol()}"  accept-charset="UTF-8" style="display:inline">
+                                        <button class="btn btn-xs btn-info" type="submit" data-toggle="modal">
+                                            <i class="glyphicon glyphicon-refresh"></i> Refresh
+                                        </button>
+                                    </form>
+                                    <form method="POST" th:action="${'/stock/delete/' + stock.getId()}"  accept-charset="UTF-8" style="display:inline">
+                                        <button class="btn btn-xs btn-danger" type="button" data-toggle="modal" data-target="#confirmDelete">
+                                            <i class="glyphicon glyphicon-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="col-md-1"/>

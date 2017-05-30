@@ -7,9 +7,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 
-/**
- * Created by Rpg on 29/05/2017.
- */
 @Component
 public class ScheduledUpdate {
 
@@ -35,5 +32,9 @@ public class ScheduledUpdate {
     
     public void setTriggerEnabled(boolean triggerEnabled) {
         this.triggerEnabled = triggerEnabled;
+    }
+
+    public boolean isTriggerEnabled() {
+        return triggerEnabled;
     }
 }

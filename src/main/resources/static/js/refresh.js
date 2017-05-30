@@ -2,20 +2,22 @@ function beginrefresh() {
     setInterval("refresh()", 65000)
 }
 function refresh() {
-    method = "post";
+    if (document.getElementById("autoRefresh")) {
+        method = "post";
 
-    // The rest of this code assumes you are not using a library.
-    // It can be made less wordy if you use one.
-    var form = document.createElement("form");
-    form.setAttribute("method", method);
-    form.setAttribute("action", "/");
+        // The rest of this code assumes you are not using a library.
+        // It can be made less wordy if you use one.
+        var form = document.createElement("form");
+        form.setAttribute("method", method);
+        form.setAttribute("action", "/");
 
-    var hiddenField = document.createElement("input");
-    hiddenField.setAttribute("name", "refresh");
-    form.appendChild(hiddenField);
+        var hiddenField = document.createElement("input");
+        hiddenField.setAttribute("name", "refresh");
+        form.appendChild(hiddenField);
 
-    $(document.body).append(form);
+        $(document.body).append(form);
 
-    form.submit();
+        form.submit();
+    }
 }
 window.onload = beginrefresh;
