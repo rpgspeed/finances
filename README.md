@@ -11,3 +11,5 @@ GRFS
 CVCO
 
 Other symbols to download are inside companylist.csv file on "/src/main/resources/static/companylist.csv"
+
+Url to access: http://localhost:8080
