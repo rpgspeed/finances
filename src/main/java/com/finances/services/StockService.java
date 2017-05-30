@@ -7,9 +7,6 @@ import yahoofinance.YahooFinance;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Created by Rpg on 23/05/2017.
- */
 public interface StockService {
 
 

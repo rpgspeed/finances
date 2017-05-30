@@ -1,13 +1,12 @@
 package com.finances.utils;
 
+import org.springframework.stereotype.Component;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 
 import java.io.IOException;
 
-/**
- * Created by Rpg on 30/05/2017.
- */
+@Component
 public class UtilsYahooFinance {
 
     /**
