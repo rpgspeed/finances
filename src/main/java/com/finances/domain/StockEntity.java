@@ -100,22 +100,4 @@ public class StockEntity implements Serializable {
         updatedAt = LocalDateTime.now();
         updatedBy = SYSTEM_USER;
     }
-
-    /*@OneToOne
-    public StockQuote getQuote() {
-        return quote;
-    }
-
-
-    @OneToOne
-    public StockStats getStats() {
-        return stats;
-    }
-
-    
-    
-    @OneToOne
-    public StockDividend getDividend() {
-        return dividend;
-    }*/
 }

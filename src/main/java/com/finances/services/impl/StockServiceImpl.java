@@ -5,10 +5,9 @@ import com.finances.domain.StockEntity;
 import com.finances.repositories.StockRepository;
 import com.finances.services.StockService;
 import com.finances.utils.UtilsCSV;
-import org.springframework.data.domain.PageRequest;
+import com.finances.utils.UtilsYahooFinance;
 import org.springframework.stereotype.Service;
 import yahoofinance.Stock;
-import yahoofinance.YahooFinance;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -21,21 +20,17 @@ public class StockServiceImpl implements StockService{
 
     private final StockRepository stockRepository;
 
-    public StockServiceImpl(UtilsCSV utilsCSV, StockRepository stockRepository) {
+    private final UtilsYahooFinance utilsYahooFinance;
+
+    public StockServiceImpl(UtilsCSV utilsCSV, StockRepository stockRepository, UtilsYahooFinance utilsYahooFinance) {
         this.utilsCSV = utilsCSV;
         this.stockRepository = stockRepository;
-    }
-
-    public void aaa() throws IOException {
-        String[] symbols = new String[] {"INTC", "BABA", "TSLA", "AIR.PA", "YHOO"};
-        Map<String, Stock> stocks = YahooFinance.get(symbols); // single request
-        Stock intel = stocks.get("INTC");
-        Stock airbus = stocks.get("AIR.PA");
+        this.utilsYahooFinance = utilsYahooFinance;
     }
 
     @Override
     public Stock getStock(final String symbol) throws IOException {
-        Stock stock = YahooFinance.get(symbol);
+        Stock stock = utilsYahooFinance.getStockFromYahooFinance(symbol);
         StockEntity stockEntity = new StockEntity(stock);
         saveOrUpdate(stockEntity);
         return stock;
@@ -46,9 +41,12 @@ public class StockServiceImpl implements StockService{
         List<Stock> stockList = new ArrayList<>();
         try {
             Set<String> allSymbols = utilsCSV.getAllSymbols("static/companylist.csv");
-            allSymbols = new HashSet<>(new ArrayList<String>(allSymbols).subList(0, 10));
+            if (allSymbols.size() > 10) {
+                allSymbols = new HashSet<>(new ArrayList<String>(allSymbols).subList(0, 10));
+            }
+
             for (String symbol : allSymbols) {
-                stockList.add(YahooFinance.get(symbol));
+                stockList.add(utilsYahooFinance.getStockFromYahooFinance(symbol));
             }
 
             for (Stock stock : stockList) {
@@ -63,7 +61,7 @@ public class StockServiceImpl implements StockService{
         return stockList;
     }
 
-    public StockEntity saveOrUpdate(final StockEntity stockEntity) {
+    private StockEntity saveOrUpdate(final StockEntity stockEntity) {
         StockEntity stockEntityToUpdate = stockRepository.findBySymbol(stockEntity.getSymbol());
 
         if (stockEntityToUpdate != null) {
@@ -87,14 +85,15 @@ public class StockServiceImpl implements StockService{
     public void updateLastOldStocks() throws IOException {
         List<StockEntity> lastOldStocks = stockRepository.getLastOldStocks();
         List<StockEntity> stockEntities = lastOldStocks;
-        if (lastOldStocks.size() > 10) {
-            stockEntities = lastOldStocks.subList(0, 10);
-        }
+//        if (lastOldStocks.size() > 10) {
+//            stockEntities = lastOldStocks.subList(0, 10);
+//        }
 
         for (StockEntity lastOldStock : stockEntities) {
-            Stock stock = YahooFinance.get(lastOldStock.getSymbol());
+            Stock stock = utilsYahooFinance.getStockFromYahooFinance(lastOldStock.getSymbol());
             saveOrUpdate(new StockEntity(stock));
             System.out.println("TRIGGER: "+lastOldStock.getSymbol());
         }
     }
+
 }
