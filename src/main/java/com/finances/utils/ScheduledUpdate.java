@@ -13,6 +13,8 @@ import java.text.SimpleDateFormat;
 @Component
 public class ScheduledUpdate {
 
+    private boolean triggerEnabled = true;
+   
     private final StockService stockService;
 
     public ScheduledUpdate(StockService stockService) {
@@ -20,12 +22,18 @@ public class ScheduledUpdate {
     }
 
     @Scheduled(initialDelay=1000, fixedRate=60000)
-    public void reportCurrentTime() {
+    public void updateLastOldStocksTrigger() {
         try {
-            stockService.updateLastOldStocks();
+            if (triggerEnabled) {
+                stockService.updateLastOldStocks();
+            }
         } catch (IOException e) {
             System.out.println("Failed automatic update");
         }
 
+    }
+    
+    public void setTriggerEnabled(boolean triggerEnabled) {
+        this.triggerEnabled = triggerEnabled;
     }
 }
